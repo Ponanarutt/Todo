@@ -3,6 +3,8 @@
 import ToDo from "@/Components/ToDo";
 import Image from "next/image";
 import { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
   
@@ -20,21 +22,25 @@ export default function Home() {
   }
   
   const onSubmithandle = async (e) => {
-    e.preventDefault(); // mai hai re page
-    try{
-
-    } catch(error){
-
+    e.preventDefault(); // Prevent page reload
+    try {
+      console.log('Submitting:', formData); // Log form data on submit
+      toast.success('Success');
+      // You can add additional logic for handling the submitted data here.
+    } catch (error) {
+      toast.error('Submission failed'); // Handle errors
     }
-    
-    
-  }
+  };
 
   return (
 
     
     <>
-      <form onSubmit={onSubmithandle} className="flex-item-start flex-col gap-2 w-[80%] max-w-[600px] mt-28 px-2 mx-auto">
+      <ToastContainer/>
+      <form
+        onSubmit={onSubmithandle}
+        className="flex-item-start flex-col gap-2 w-[80%] max-w-[600px] mt-28 px-2 mx-auto"
+      >
         <input
           value={formData.title}
           onChange={onChageHandler}
@@ -42,17 +48,17 @@ export default function Home() {
           name="title"
           placeholder="Enter Title"
           className="px-3 py-2 border-2 w-full"
-        ></input>
+        />
         <textarea
-          value={formData.description} // ผูกค่าเข้้ากับฟรอม
+          value={formData.description}
           onChange={onChageHandler}
           name="description"
-          placeholder="Enter Desription"
+          placeholder="Enter Description"
           className="mt-3 mb-4 px-3 py-2 border-2 w-full"
-        ></textarea>
-        <botton type="submit" className="bg-orange-600 py-3 px-11 text-white">
+        />
+        <button type="submit" className="bg-orange-600 py-3 px-11 text-white">
           Add Todo
-        </botton>
+        </button>
       </form>
 
       <div className="relative overflow-x-auto mt-24 w-[60%] mx-auto">
