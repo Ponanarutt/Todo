@@ -1,8 +1,9 @@
 'use client'
 
 import ToDo from "@/Components/ToDo";
+import axios, { AxiosError } from "axios";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,6 +15,34 @@ export default function Home() {
     
   });
 
+  const [todoData, setTodoData] = useState([]);
+
+
+  const fetchTodos = async () => {
+
+    const response = await axios('/api') // ขอข้อมูลจากดดเส้นนี้
+    setTodoData(response.data.todos)
+ 
+  }
+
+  const deleteTodo = async (mongoId) => {
+    console.log(mongoId)
+      const response = await axios.delete('/api',{
+        params:{
+          mongoId:mongoId
+        }
+      })
+
+      toast.success(response.data.msg);
+      fetchTodos();
+  }
+
+  useEffect(()=>{
+  
+    fetchTodos()
+  
+  },[]) // ขอตอนเริ่ม
+
   const onChageHandler = (e) => {
     const name = e.target.name;
     const value = e.target.value
@@ -24,19 +53,46 @@ export default function Home() {
   const onSubmithandle = async (e) => {
     e.preventDefault(); // Prevent page reload
     try {
-      console.log('Submitting:', formData); // Log form data on submit
-      toast.success('Success');
+      //sent the pacgage of the data in jason file 
+      const response = await axios.post('/api',formData);
+      // console.log('Submitting:', formData); // Log form data on submit
+      toast.success(response.data.msg);
+      setformData({
+        title:"",
+        description:""
+        
+      })
+      fetchTodos();
       // You can add additional logic for handling the submitted data here.
     } catch (error) {
       toast.error('Submission failed'); // Handle errors
     }
   };
 
+  const completeTodo = async (id) => {
+    try {
+      const response = await axios.put(
+        '/api',
+        {}, // No data to send in the body, so just an empty object
+        {
+          params: {
+            mongoId: id, // Pass the `mongoId` as a query parameter
+          },
+        }
+      );
+  
+      toast.success(response.data.msg);
+      fetchTodos(); // Refresh the list after marking as complete
+    } catch (error) {
+      toast.error("Failed to mark todo as completed");
+    }
+  };
+  
   return (
 
     
     <>
-      <ToastContainer/>
+      <ToastContainer theme= "dark"/>
       <form
         onSubmit={onSubmithandle}
         className="flex-item-start flex-col gap-2 w-[80%] max-w-[600px] mt-28 px-2 mx-auto"
@@ -83,9 +139,11 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            <ToDo/>
-            <ToDo/>
-            <ToDo/>
+            {todoData.map((item,index)=>{
+              console.log(item._id)
+              return<ToDo completeTodo={completeTodo} key={index} title={item.title} id={index} description={item.description} complete={item.isCompleted} mongoId={item._id} deleteTodo={deleteTodo} />
+            })}
+            
           </tbody>
           
         </table>
