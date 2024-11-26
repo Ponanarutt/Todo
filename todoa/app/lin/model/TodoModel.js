@@ -14,7 +14,8 @@ const Schema = new mongoose.Schema({
     default: false,
   },
 }, {
-  timestamps: true, // Enables createdAt and updatedAt fields
+  timestamps
+  : true, // Enables createdAt and updatedAt fields
 });
 
 const TodoModel = mongoose.models.todo || mongoose.model("todo", Schema);

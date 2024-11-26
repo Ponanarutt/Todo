@@ -140,7 +140,6 @@ export default function Home() {
           </thead>
           <tbody>
             {todoData.map((item,index)=>{
-              console.log(item._id)
               return<ToDo completeTodo={completeTodo} key={index} title={item.title} id={index} description={item.description} complete={item.isCompleted} mongoId={item._id} deleteTodo={deleteTodo} />
             })}
             
